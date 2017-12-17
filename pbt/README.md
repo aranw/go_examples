@@ -1,6 +1,6 @@
 # Property Basded Testing
 
-I came across Property Based Testing recently and I'd never realised there was such a way to automate testing of inputs and [commutative](https://en.wikipedia.org/wiki/Commutative_property). In the past I would of achieved a similar thing using the table based testing approach.
+I came across Property Based Testing recently and I'd never realised there was such a way to automate testing of inputs and that the subject being tested is [commutative](https://en.wikipedia.org/wiki/Commutative_property) meaning that it has the same output regardless of the order of inputs. In the past I would of achieved a similar thing using the table based testing approach.
 
 ## References
 
