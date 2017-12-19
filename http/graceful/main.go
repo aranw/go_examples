@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -9,14 +10,9 @@ import (
 
 	goji "goji.io"
 	"goji.io/pat"
-
-	"github.com/Sirupsen/logrus"
 )
 
 func main() {
-	sgn := make(chan os.Signal, 1)
-	signal.Notify(sgn, os.Interrupt, os.Kill)
-
 	router := goji.NewMux()
 	router.Use(logHandler)
 	router.HandleFunc(pat.Get("/"), homeHandler)
@@ -27,25 +23,27 @@ func main() {
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil {
-			if err == http.ErrServerClosed {
-				logrus.Printf("server closed")
-			} else {
-				logrus.Fatalf("cannot start server: %v", err)
-			}
+		// Graceful shutdown
+		sigquit := make(chan os.Signal, 1)
+		signal.Notify(sigquit, os.Interrupt, os.Kill)
+
+		sig := <-sigquit
+		log.Printf("caught sig: %+v", sig)
+		log.Printf("Gracefully shutting down server...")
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Printf("Unable to shut down server: %v", err)
+		} else {
+			log.Println("Server stopped")
 		}
 	}()
 
-	<-sgn
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := srv.Shutdown(ctx); err != nil {
-		logrus.Warnf("could not shutdown server: %v", err)
+	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		log.Printf("%v", err)
+	} else {
+		log.Printf("Server shutdown!")
 	}
-
-	logrus.WithFields(logrus.Fields{
-		"port": ":8080",
-	}).Print("shutdown")
 }
