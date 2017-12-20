@@ -1,16 +1,15 @@
-package pbt
+package pbt_test
 
 import (
 	"testing"
 	"testing/quick"
+
+	. "github.com/aranw/go_examples/testing/pbt"
 )
 
 func TestAdd(t *testing.T) {
 	assertion := func(a, b int) bool {
-		if Add(a, b) != Add(b, a) {
-			return false
-		}
-		return true
+		return Add(a, b) == Add(b, a)
 	}
 
 	if err := quick.Check(assertion, nil); err != nil {
@@ -20,10 +19,7 @@ func TestAdd(t *testing.T) {
 
 func TestAddToZero(t *testing.T) {
 	assertion := func(a int) bool {
-		if Add(a, 0) != Add(0, a) {
-			return false
-		}
-		return true
+		return Add(a, 0) == Add(0, a)
 	}
 
 	if err := quick.Check(assertion, nil); err != nil {

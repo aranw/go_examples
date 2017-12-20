@@ -4,7 +4,7 @@ import (
 	"testing"
 	"testing/quick"
 
-	. "github.com/aranw/go_examples/pbt"
+	. "github.com/aranw/go_examples/testing/pbt"
 )
 
 func TestCache(t *testing.T) {
