@@ -18,9 +18,6 @@ import (
 var version = "master"
 
 func main() {
-	sgn := make(chan os.Signal, 1)
-	signal.Notify(sgn, os.Interrupt, os.Kill)
-
 	// helpFlag := flag.BoolP("help", "h", false, "show help")
 	debugFlag := flag.BoolP("debug", "d", false, "enable debug mode")
 	versionFlag := flag.BoolP("version", "v", false, "show version")
